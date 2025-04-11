@@ -37,6 +37,37 @@ def form_errors(form):
             error_messages.append(message)
 
     return error_messages
+@app.route('/api/v1/movies', methods=['POST'])
+def movies():
+    form = MovieForm()
+
+    if form.validate_on_submit():
+        title = form.title.data
+        description = form.description.data
+        poster_file = form.poster.data
+
+        # Secure and save the file
+        filename = secure_filename(poster_file.filename)
+        upload_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        poster_file.save(upload_path)
+
+        # Save to DB
+        movie = Movie(title=title, description=description, poster=filename)
+        db.session.add(movie)
+        db.session.commit()
+
+        return jsonify({
+            "message": "Movie Successfully added",
+            "title": title,
+            "poster": filename,
+            "description": description
+        }), 201
+
+    # Validation failed
+    return jsonify({
+        "errors": form_errors(form)
+    }), 400
+
 
 @app.route('/<file_name>.txt')
 def send_text_file(file_name):
