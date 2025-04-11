@@ -8,7 +8,7 @@ This file creates your application.
 from app import app
 from flask import render_template, request, jsonify, send_file
 import os
-
+from flask_wtf.csrf import generate_csrf
 
 ###
 # Routing for your application.
@@ -68,6 +68,9 @@ def movies():
         "errors": form_errors(form)
     }), 400
 
+@app.route('/api/v1/csrf-token', methods=['GET'])
+def get_csrf():
+    return jsonify({'csrf_token': generate_csrf()})
 
 @app.route('/<file_name>.txt')
 def send_text_file(file_name):
