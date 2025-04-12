@@ -20,10 +20,9 @@ class Movie(db.Model):
     
     def get_id(self):
         try:
-            return unicode(self.id)  # python 2 support
+            return unicode(self.id)  
         except NameError:
-            return str(self.id)  # python 3 support
-    
+            return str(self.id)  
     
     def __repr__(self):
         return '<Movie {}>'.format(self.title)
